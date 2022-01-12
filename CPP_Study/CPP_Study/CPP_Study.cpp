@@ -1,9 +1,6 @@
 ﻿#include <iostream>
 using namespace std;
 
-//초기값이 0이거나, 초기값이 없는 변수라면 .bss 영역
-//0이 아닌 초기화 값이 있으면 .data영역
-
 char a; // 1byte(-128 ~ 127)
 short b; // 2bytes(-32768 ~ 32767)
 int c; // 4bytes(-21.4억 ~ 21.4억)
@@ -16,7 +13,7 @@ unsigned __int64 ud; // 8bytes(long long)(0 ~ 범위 많이 큼)
 
 bool isboolean; // 1바이트 (최소단위라서 1비트 안됨)
 
-
+#pragma region 실수(부동소수점)
 // 실수(부동소수점)
 // float double
 // 3.1415926535
@@ -39,8 +36,9 @@ bool isboolean; // 1바이트 (최소단위라서 1비트 안됨)
 // 1/3 = 0.33333333333333333333333333~
 // 특히 수가 커질 수록 오차 범위도 매우 커짐
 // 실수 2개를 == 으로 비교하는 것은 지양
+#pragma endregion
 
-
+#pragma region 문자및문자열
 // 문자
 // char : 아스키코드
 // wchar_t : 유니코드
@@ -69,10 +67,40 @@ wchar_t wch = 0xc548;// L'안';
 char str[] = { 'h','e','l','l','o','\0' };
 char str2[] = "Hello World";
 wchar_t str3[] = L"Hello World 안녕";
+#pragma endregion
+
+// >> 비트 우측 이동 : 생성될 맨 왼쪽 비트는 부호 비트값에 따라 생성됨. 그래서 unsigned로 만들어야 정신건강에 좋음
+
+#pragma region 데이터 영역
+// 전역변수 데이터 영역
+// .data : 초기값이 있는 경우
+int num_a = 2;
+// .bss : 초기값이 없는 경우
+int num_b;
+// .rodata : 읽기 전용 데이터
+const int num_c = 5; // 컴파일러 하기 나름이고 const라고 .rodata에 무조건 들어가는건 아님
+const int CONST_NUM = 0; // 전역변수에 이런 const int는 컴파일러에서 해당 부분을 0으로 바꿔서 정작 이 변수는 존재하지 않는 경우도 있음
+#pragma endregion
 
 int main()
 {
+#pragma region 스택 영역
+    // 함수 내 변수는 스택영역에 저장
+    // {}(중괄호)과 생존 범위
+    {
+        int num_C = 5;
+    }
+    int num_c = 3;
+#pragma endregion
     //cout << "Hello World!\n" << endl;
+#pragma region 유니코드 문자 출력
     wcout.imbue(locale("kor")); //wchar_t는 wcout 사용
     wcout << str3 << endl;
+#pragma endregion
+
+    int a = 1;
+    int b = 0;
+    b = a++;
+    cout << b << endl; // 1
+    cout << a << endl; // 2
 }
