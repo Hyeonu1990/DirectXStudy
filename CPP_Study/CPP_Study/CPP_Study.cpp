@@ -82,7 +82,23 @@ const int num_c = 5; // 컴파일러 하기 나름이고 const라고 .rodata에 
 const int CONST_NUM = 0; // 전역변수에 이런 const int는 컴파일러에서 해당 부분을 0으로 바꿔서 정작 이 변수는 존재하지 않는 경우도 있음
 #pragma endregion
 
+#define DEFINE_NUM 1+2 // 보통 이런 상수는 const 같은거 사용
+#define DEFINE_TEST cout << "Hello World!\n" << endl;
+
+#pragma region 함수 선언
+int base();
+void Func2(int, int); // == void Func2(int x, int y);
+int Pointer();
+#pragma endregion
+
+//[ [main매개변수][RET][main지역변수] [호출된 함수 매개변수][RET][호출된 함수 지역변수] ~ ] // RET : 리턴주소
 int main()
+{
+    Pointer();
+    return 0;
+}
+
+int base()
 {
 #pragma region 스택 영역
     // 함수 내 변수는 스택영역에 저장
@@ -92,7 +108,12 @@ int main()
     }
     int num_c = 3;
 #pragma endregion
-    //cout << "Hello World!\n" << endl;
+
+#pragma region 전처리관련
+    DEFINE_TEST;//이미 컴파일 후 cout << "Hello World!\n" << endl;로 대체되었기 때문에 BreakPoint 걸기가 애매하다
+    cout << DEFINE_NUM * 2 << endl; //(1 + 2) * 2가 아니라 1 + 2 * 2 가 계산됨
+#pragma endregion
+
 #pragma region 유니코드 문자 출력
     wcout.imbue(locale("kor")); //wchar_t는 wcout 사용
     wcout << str3 << endl;
@@ -103,4 +124,43 @@ int main()
     b = a++;
     cout << b << endl; // 1
     cout << a << endl; // 2
+
+    return 0;
+}
+
+int Random()
+{
+    srand(time(0));//시드설정
+    //rand();//0~32767
+    cout << rand() << endl;
+    cout << rand() << endl;
+    cout << rand() << endl;
+    cout << rand() << endl;
+    cout << rand() << endl;
+    cout << rand() << endl;
+
+    return 0;
+}
+
+void Func1()
+{
+    cout << "Func1" << endl;
+    Func2(1, 2); // 상단에 Func2 선언이 없으면 컴파일 에러
+}
+
+void Func2(int a, int b)
+{
+    cout << "Func2" << endl;
+}
+
+int Pointer()
+{
+    int num = 1;
+    // 참고) 포인트 사이즈는 4바이트(32비트) or 8바이트(64비트)
+    int* ptr = &num;
+
+    int value1 = *ptr;
+    *ptr = 2;
+
+    return 0;
 }
