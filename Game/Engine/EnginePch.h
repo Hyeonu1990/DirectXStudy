@@ -1,6 +1,6 @@
 #pragma once
 
-// °¢Á¾ inclue
+// ê°ì¢… inclue
 #include <string>
 #include <vector>
 #include <memory>
@@ -21,13 +21,13 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
 
-// °¢Á¾ lib
+// ê°ì¢… lib
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3dcompiler")
 
-// °¢Á¾ typedef
+// ê°ì¢… typedef
 using int8		= __int8;
 using int16		= __int16;
 using int32		= __int32;
@@ -41,4 +41,17 @@ using Vec3		= XMFLOAT3;
 using Vec4		= XMFLOAT4;
 using Matrix	= XMMATRIX;
 
-void HelloEngine();
+enum
+{
+	SWAP_CHAIN_BUFFER_COUNT = 2
+};
+
+struct WindowInfo
+{
+	HWND	hwnd; // ì¶œë ¥ ìœˆë„ìš°
+	int32	width; //ë„ˆë¹„
+	int32	height; //ë†’ì´
+	bool	windowed; //ì°½ëª¨ë“œ or ì „ì²´í™”ë©´
+};
+
+extern unique_ptr<class Engine> GEngine;

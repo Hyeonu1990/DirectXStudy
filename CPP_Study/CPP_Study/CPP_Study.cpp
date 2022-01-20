@@ -162,5 +162,23 @@ int Pointer()
     int value1 = *ptr;
     *ptr = 2;
 
+    //타입의 불일치
+    __int64* ptr2 = (__int64*)&num;
+
+    *ptr2 = 0x0000AABBCCDDEEFF;
+
     return 0;
+}
+
+int Pointer2()
+{
+    int number = 1;
+
+    int* pointer = &number;
+
+    number += 1; // 당연히 1 증가
+
+    // 포인트 +- 연산은 Type 크기만큼 이동
+    pointer += 1; // Type(int) 크기 만큼 4 증가
+    
 }
