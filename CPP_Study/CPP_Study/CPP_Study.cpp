@@ -1218,11 +1218,6 @@ public:
 
 };
 
-class Dog
-{
-
-};
-
 void PrintName(char* str)
 {
     cout << str << endl;
@@ -1261,15 +1256,148 @@ int main6()
 
     __int64 address = reinterpret_cast<__int64>(k2); // (__int64)k2;
     Dog* dog = reinterpret_cast<Dog*>(k2); //static_cast는 에러
+    
+    void* _ptr = malloc(1000);
+    Dog* dog2 = reinterpret_cast<Dog*>(_ptr); // (Dog*)p;
 
-    void* p = malloc(1000);
-    Dog* dog2 = reinterpret_cast<Dog*>(p); // (Dog*)p;
+    return 0;
+}
+
+#include "Game.h"
+int TextRPG()
+{
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    Game game;
+    game.Init();
+
+    while (true)
+    {
+        game.Update();
+    }
+
+    return 0;
+}
+
+// [ 함수 포인터 ]
+
+int Add(int a, int b)
+{
+    return a + b;
+}
+
+int Sub(int a, int b)
+{
+    return a - b;
+}
+
+typedef bool(ITEM_SELECTOR)(Item* item, int);
+
+//Item* FindItem(Item items[], int itemCount, bool(*selector)(Item* item))
+Item* FindItem(Item items[], int itemCount, ITEM_SELECTOR* selector, int _value)
+{
+    for (int i = 0; i < itemCount; i++)
+    {
+        Item* item = &items[i];
+        if (selector(item, _value))
+            return item;
+    }
+    return nullptr;
+}
+
+bool CheckSomeType(Item* item, int _value)
+{
+    if (item == nullptr)
+        return false;
+
+    return item->_itemType == _value;
+}
+
+bool IsOwnerItem(Item* item, int ownerId)
+{
+    if (item == nullptr)
+        return false;
+
+    return item->_itemDbId == ownerId;
+}
+
+class TestClass
+{
+public:
+    static int StaticTest(int, int)
+    {
+        return 0;
+    }
+
+    int Test(int, int)
+    {
+        return 0;
+    }
+};
+
+int main7()
+{
+    int a = 10;
+
+    //변수
+    typedef int DATA;
+
+    // 1) 포인터       *
+    // 2) 변수 이름    pointer
+    // 3) 데이터 타입  int
+    DATA* pointer = &a;
+
+    //함수
+    // typedef int *FUNC_TYPE(int a, int b); -> typedef int(FUNC_TYPE)(int a, int b);  -------- int* FUNC_TYPE이랑 int *FUNC_TYPE이랑 햇갈리까 나온 표현? 인듯
+    typedef int(*FUNC_TYPE)(int a, int b); // using = FUNC_TYPE = int(int a, int b); <- Mordern C++ 타입
+
+    // 1) 포인터       *
+    // 2) 변수 이름    fn
+    // 3) 데이터 타입  함수 (인자는 (int, int), 반환은 int)
+    FUNC_TYPE fn; // == int (*fn)(int, int);
+
+    // 함수의 이름은 함수의 시작 주소
+    int result = Add(1, 2);
+    cout << result << endl;
+
+    // 함수 포인터
+    fn = Add; // <-> Sub
+    fn = &Add; // 위처럼 & 생략가능
+
+    result = fn(2, 3); // 기본 문법
+    cout << result << endl;
+
+    result = (*fn)(2, 3); // 위랑 같은 의미, 함수 포인터는 *(접근 연산자) 붙어도 함수 주소!
+    cout << result << endl;
+
+    //예제
+    Item items[10] = {};
+    items[3]._itemType = 2;
+    Item* selectedItem = FindItem(items, 10, CheckSomeType, 2);
+
+
+
+    fn = TestClass::StaticTest; // 일반 함수포인트는 클래스는 static 함수만 받을 수 있다.
+    //fn = TestClass::Test; // 에러
+
+    typedef int(TestClass::*MEMBER_FUNC_TYPE)(int, int);
+
+    MEMBER_FUNC_TYPE mfn;
+    //mfn = TestClass::StaticTest; // 에러
+    mfn = &TestClass::Test; // &없으면 빌드에러
+
+    //mfn(1, 2); // 에러
+    TestClass testClass;
+    (testClass.*mfn)(1, 1);
+    TestClass* tcPtr = new TestClass();
+    (tcPtr->*mfn)(1, 1);
 
     return 0;
 }
 
 int main()
 {
-    main6();
+    //TextRPG();
+    main7();
     return 0;
 }

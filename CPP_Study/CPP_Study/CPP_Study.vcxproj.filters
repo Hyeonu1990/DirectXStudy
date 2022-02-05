@@ -13,10 +13,48 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\Game">
+      <UniqueIdentifier>{3ac77236-7b0d-4105-98b4-55f0f493de98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Creature">
+      <UniqueIdentifier>{bae473ac-c2da-4879-8bcf-1f148694e38e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CPP_Study.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>소스 파일\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GPlayer.cpp">
+      <Filter>소스 파일\Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="Creature.cpp">
+      <Filter>소스 파일\Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="Field.cpp">
+      <Filter>소스 파일\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>소스 파일\Creature</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game.h">
+      <Filter>소스 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GPlayer.h">
+      <Filter>소스 파일\Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="Creature.h">
+      <Filter>소스 파일\Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="Field.h">
+      <Filter>소스 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>소스 파일\Creature</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
