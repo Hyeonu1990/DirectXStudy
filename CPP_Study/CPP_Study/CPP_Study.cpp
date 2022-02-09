@@ -811,6 +811,8 @@ public:
 public:
     int _itemType = 0;
     int _itemDbId = 0;
+    int _rarity = 0;
+    int _ownerID = 0;
 
     char _dummy[4096] = {};
 };
@@ -1188,7 +1190,7 @@ int main5()
 
     return 0;
 }
-
+#pragma region Casting
 // 캐스팅 (타입 변환) (강의명 : 캐스팅 4총사)
 // (int)30.0 -> C언어 캐스팅 방식, 지양합시다
 
@@ -1262,6 +1264,7 @@ int main6()
 
     return 0;
 }
+#pragma endregion
 
 #include "Game.h"
 int TextRPG()
@@ -1279,6 +1282,7 @@ int TextRPG()
     return 0;
 }
 
+#pragma region 함수포인터
 // [ 함수 포인터 ]
 
 int Add(int a, int b)
@@ -1394,10 +1398,1170 @@ int main7()
 
     return 0;
 }
+#pragma endregion
+#pragma region 함수 객체 (Functor)
+// 함수 객체 (Functor) : 함수처럼 동작하는 객체
+
+void HelloWorld()
+{
+    cout << "Hello World" << endl;
+}
+
+void HelloNumber(int number)
+{
+    cout << "Hello Number " << number << endl;
+}
+
+class Functor
+{
+public:
+    void operator()()
+    {
+        cout << "Functor Test" << endl;
+        cout << _value << endl;
+    }
+
+    bool operator()(int num)
+    {
+        cout << "Functor Test" << endl;
+        _value += num;
+        cout << _value << endl;
+
+        return true;
+    }
+
+private:
+    int _value = 0;
+};
+
+class MoveTask
+{
+public:
+    void operator()()
+    {
+        cout << "해당 좌표로 플레이어 이동" << endl;
+    }
+
+public:
+    int _playerId;
+    int _posX;
+    int _posY;
+};
+
+int main8()
+{
+    //함수 포인터 선언
+    void(*pfunc)(void);
+
+    // 동작을 넘겨줄 때 유용하다
+    pfunc = &HelloWorld;
+    (*pfunc)();
+
+    //함수 포인터 단점
+    // 1) 시그니처가 안 맞으면 사용 할 수 없다. -> pfunc = &HelloNumber; // 에러
+    // 2) 상태(데이터)를 가질 수 없다
+
+    // [함수처럼 동작]하는 객체
+    // () 연산자 오버로딩
+    Functor functor;
+    functor();
+    bool ret = functor(3);
+
+    // MMO에서 함수 객체를 사용하는 예시
+    // 클라 <-> 서버
+    // 서버 : 클라가 보내준 네트워크 패킷을 받아서 처리
+    // ex) 클라 : 나 (5, 0) 좌표로 이동시켜줘!
+    MoveTask task;
+    task._playerId = 100;
+    task._posX = 5;
+    task._posY = 0;
+    // 나중에 여유 될 때 실행
+    task();
+    // 이런걸 커맨트 패턴 이라고 불림
+
+    return 0;
+}
+#pragma endregion
+#pragma region Template
+// [템플릿]
+
+class TKnight
+{
+public:
+    //...
+public:
+    int _hp = 100;
+};
+
+template<typename T> // == template<class T>
+void Print(T a)
+{
+    cout << a << endl;
+}
+
+// 템플릿 특수화
+template<>
+void Print(TKnight a)
+{
+    cout << "Knight" << endl;
+    cout << a._hp << endl;
+}
+
+template<typename T1, typename T2> // == template<class T>
+void Print(T1 a, T2 b)
+{
+    cout << a << " " << b << endl;
+}
+
+template<typename T>
+T Add(T a, T b)
+{
+    return a + b;
+}
+
+// 연산자 오버로딩 (전역함수 버전)
+ostream& operator<<(ostream& os, const TKnight& k)
+{
+    os << k._hp;
+    return os;
+}
+
+template <typename T, int SIZE = 10>
+class RandomBox
+{
+public:
+    T GetRandomData()
+    {
+        int idx = rand() % SIZE;
+        return _data[idx];
+    }
+public:
+    T _data[SIZE];
+};
+
+// 템플릿 특수화
+template <int SIZE>
+class RandomBox<double, SIZE>
+{
+public:
+    double GetRandomData()
+    {
+        cout << "RandomBox double" << endl;
+        int idx = rand() % SIZE;
+        return _data[idx];
+    }
+public:
+    double _data[SIZE];
+};
+
+int main9()
+{
+    srand(static_cast<unsigned int>(time(nullptr)));
+    // 템플릿 : 함수나 클래스를 찍어내는 틀
+    // 1) 함수 템플릿
+
+    Print<int>(50);
+    Print(50.0f);
+    Print(50.0);
+    Print("Hello Template World");
+    Print(5, "Text");
+
+    TKnight k1;
+    Print(k1); // 빌드에러를 피하려면 연산자 오버로딩 추가 혹은 템플릿 특수화 필요
+
+    cout << "--------------------------------" << endl;
+    // 2) 클래스 템플릿
+
+    RandomBox<int> rb1;
+    for (int i = 0; i < 10; i++)
+    {
+        rb1._data[i] = i;
+    }
+    int value1 = rb1.GetRandomData();
+    cout << value1 << endl;
+
+    RandomBox<float, 20> rb2;
+    for (int i = 0; i < 20; i++)
+    {
+        rb2._data[i] = i + 0.5f;
+    }
+    float value2 = rb2.GetRandomData();
+    cout << value2 << endl;
+
+    //rb1 = rb2; // 에러 - 템플릿 타입이 다르기 때문에 다른 클래스로 인식됨
+
+    RandomBox<double, 20> rb3;
+    for (int i = 0; i < 20; i++)
+    {
+        rb3._data[i] = i + 0.5f;
+    }
+    float value3 = rb3.GetRandomData();
+    cout << value3 << endl;
+
+    return 0;;
+}
+#pragma endregion
+#pragma region CallBack 함수 구현
+// CallBack
+
+class FindByOwnerId // Functor
+{
+public:
+    bool operator()(const Item* item)
+    {
+        if (item == nullptr) return false;
+        return item->_ownerID == _ownerId;
+    }
+
+public:
+    int _ownerId;
+};
+
+class FindByRarity // Functor
+{
+public:
+    bool operator()(const Item* item)
+    {
+        if (item == nullptr) return false;
+        return item->_rarity == _rarity;
+    }
+
+public:
+    int _rarity;
+};
+
+template<typename T>
+Item* FindItem(Item items[], int itemCount, T selector)
+{
+    for (int i = 0; i < itemCount; i++)
+    {
+        Item* item = &items[i];
+
+        if (selector(item))
+            return item;
+    }
+
+    return nullptr;
+}
+
+int main10()
+{
+    Item * items = new Item[10];
+    (items + 3)->_ownerID = 100;
+    (items + 8)->_rarity = 2;
+
+    FindByOwnerId functor1;
+    functor1._ownerId = 100;
+
+    FindByRarity functor2;
+    functor2._rarity = 2;
+
+    Item* item1 = FindItem(items, 10, functor1);
+    Item* item2 = FindItem(items, 10, functor2);
+
+    delete[] items;
+
+    return 0;
+}
+#pragma endregion
+
+// STL (Standard Template Library)
+// 프로그래밍할 때 필요한 자료구조/알고리즘들을
+// 템플릿으로 제공하는 라이브러리
+
+// 컨테이너(Container) : 데이터를 저장하는 객체 (자료구조 Data Structure)
+#pragma region vector
+#include <vector>
+int main11()
+{
+    // vector
+    // - vector의 동작 원리 (size/capacity)
+    // - 중간 삽입/삭제
+    // - 처음/끝 삽입/삭제
+    // - 임의 접근
+    
+    // 배열
+    const int MAX_SIZE = 1000;
+    /*int arr[MAX_SIZE] = {};
+
+    for (int i = 0; i < MAX_SIZE; i++)
+        arr[i] = i;
+    for (int i = 0; i < MAX_SIZE; i++)
+        cout << arr[i] << endl;*/
+
+    // 동적 배열
+    // 1) (여유분을 두고) 메모리를 할당한다
+    // 2) 여유분까지 꽉 찼으면, 메모리를 증설한다 - (메모리 영역 다시 할당)
+
+    // Q1) 여유분은 얼만큼이 적당할까? - 컴파일러에 따라 1.5배 혹은 2배 증설
+    // Q2) 증설을 얼마만큼 해야 할까? - 컴파일러에 따라 1.5배 혹은 2배 증설
+    // Q3) 기존의 데이터를 어떻게 처리할까? - capacity 재할당->복사->기존 데이터 제거
+
+    vector<int> v;
+    // vector<int> v(MAX_SIZE, 0); // (capacity, 기본값)
+    // v.reserve(MAX_SIZE); // capacity 지정 == vecotr<int> v(MAX_SIZE);
+    // v.resize(MAX_SIZE); // size 지정 -> size에 따라 capacity 수정됨
+
+    // size (실제 사용 데이터 개수)
+    // 1 2 3 4 5 6 7 ....
+    // capaciy (여유분을 포함한 용량 개수)
+    // 1 2 3 4 6 9 13 19 28 42 ...
+
+    for (int i = 0; i < MAX_SIZE; i++)
+    {
+v.push_back(i);
+//cout << v.size() << " " << v.capacity() << endl;
+    }
+
+    const int size = v.size(); // 중간에 크기 변할때 오류 방지
+    for (int i = 0; i < size; i++)
+    {
+        //cout << v[i] << endl;
+    }
+
+    v.pop_back();
+    cout << v.size() << " " << v.capacity() << endl;
+    int ret = v.back(); // pop은 안하고 그냥 마지막꺼 호출
+    cout << v.size() << " " << v.capacity() << endl;
+    v.clear();
+    cout << v.size() << " " << v.capacity() << endl;
+    vector<int>().swap(v); // 이런식으로 메모리 날릴 수 있지만 자주 쓰이진 않는다. 그냥 팁
+    cout << v.size() << " " << v.capacity() << endl;
+
+
+
+    // 반복자(iterator) : 포인터와 유사한 개념. 컨테이너의 원소(데이터)를 가리키고, 다음/이전 원소로 이동 가능
+    vector<int> v2(10);
+
+    for (vector<int>::size_type i = 0; i < v2.size(); i++)
+    {
+        v2[i] = i;
+    }
+
+    vector<int>::iterator it;
+    int* ptr;
+
+    it = v2.begin();
+    ptr = &v2[0];
+
+    cout << *it << endl;
+    cout << *ptr << endl;
+
+    vector<int>::iterator itBegin = v2.begin();
+    vector<int>::iterator itEnd = v2.end(); // 마치 string \n 처럼 vector의 끝을 의미, 실제 vector 내부 데이터 아님
+
+    // iterator로 데이터에 접근하는 이유
+    // - 다른 컨테이너는 v[i]와 같은 인덱스 접근이 안될 수 있음
+    // - iterator는 vector뿐 아니라, 다른 컨테이너도 공통적으로 있는 개념
+    for (vector<int>::iterator it = v2.begin(); it != v2.end(); ++it) // ++it 권장
+    {
+        cout << *it << endl;
+    }
+
+    int* ptrBegin = &v2[0]; // == v2.begin()._Ptr;
+    int* ptrEnd = ptrBegin + 10; //v.end()_Ptr;
+    for (int* ptr = ptrBegin; ptr != ptrEnd; ++ptr)
+    {
+        cout << *ptr << endl;
+    }
+
+    // const int*;
+    vector<int>::const_iterator cit1 = v2.cbegin();
+    //*cit1 = 100; //수정불가, 에러
+
+    // reverse_iterator 자주 사용하는 개념은 아님
+    for (vector<int>::reverse_iterator it = v2.rbegin(); it != v2.rend(); ++it)
+    {
+        cout << *it << endl;
+    }
+
+    //**************************************
+    // vector 특성
+    // vector = 동적 배열 = 동적으로 커지는 배열 = 배열
+    // 원소가 하나의 메모리 블록에 연속하게 저장된다
+    // - 중간 삽입/삭제 (비효욜적)
+    // - 처음/끝 삽입/삭제 (처음-비효율적/끝-효율적)
+    // - 임의 접근 (Random Access) (효율적)
+    v2.reserve(100);
+    ptrBegin = v2.begin()._Ptr; // 디버그용
+    //vector<int>::iterator inserIt =  v2.insert(v2.begin() + 2, 99); // 추가한 위치 return
+    //vector<int>::iterator eraseIt1 = v2.erase(v2.begin() + 2); // 지운 위치(v2.begin() + 2) return
+    //vector<int>::iterator eraseIt2 = v2.erase(v2.begin() + 2, v2.begin() + 4); // 지운 범위 시작 위치(v2.begin() + 2) return
+
+    // 쭉 스캔해서 3이라는 데이터가 있으면 일괄 삭제하고 싶다
+    for (vector<int>::iterator it = v2.begin(); it != v2.end();)
+    {
+        int data = *it;
+        if (data == 3)
+        {
+            it = v2.erase(it); // 할당 안하면 it 데이터 날라간 상태로 진행되서 에러
+        }
+        else
+        {
+            // erase하면 지운 자리에 바로 다음 데이터가 왔기때문에 erase 안했을때만 iterator 갱신
+            ++it;
+        }
+    }
+
+    return 0;
+}
+
+// 나만의 vector 구현하기
+
+template<typename T>
+class Iterator_Vector
+{
+public:
+    Iterator_Vector() : _Ptr(nullptr)
+    {
+
+    }
+
+    Iterator_Vector(T* ptr) : _Ptr(ptr)
+    {
+
+    }
+
+    Iterator_Vector& operator++()
+    {
+        _Ptr++;
+        return *this;
+    }
+
+    Iterator_Vector operator++(int) // &가 없는(참조 타입이 아닌) 이유는 복사된 값을 출력하려고
+    {
+        Iterator_Vector temp = *this; // 복사
+        _Ptr++;
+        return temp;
+    }
+
+    Iterator_Vector& operator--()
+    {
+        _Ptr--;
+        this* this;
+    }
+
+    Iterator_Vector operator--(int) // &가 없는(참조 타입이 아닌) 이유는 복사된 값을 출력하려고
+    {
+        Iterator_Vector temp = *this; // 복사
+        _Ptr--;
+        return temp;
+    }
+
+    Iterator_Vector operator+(const int count)
+    {
+        Iterator_Vector temp = *this;
+        temp._Ptr += count;
+        return temp;
+    }
+
+    Iterator_Vector operator-(const int count)
+    {
+        return *this + (count);
+    }
+
+    bool operator==(const Iterator_Vector& right)
+    {
+        return _Ptr == right._Ptr;
+    }
+    
+    bool operator!=(const Iterator_Vector& right)
+    {
+        return !(*this == right);
+    }
+
+    T& operator*()
+    {
+        return *_Ptr;
+    }
+
+public:
+    T* _Ptr;
+};
+
+template<typename T>
+class Vector
+{
+public:
+    Vector() : _data(nullptr), _size(0), _capacity(0)
+    {
+
+    }
+
+    ~Vector()
+    {
+        if (_data)
+            delete[] _data;
+    }
+
+    void push_back(const T& val)
+    {
+        if (_size == _capacity)
+        {
+            // 증설 작업
+            int newCapacity = static_cast<int>(_capacity * 1.5);
+            if (newCapacity == _capacity)
+                newCapacity++;
+
+            reserve(newCapacity);
+        }
+
+        _data[_size] = val;
+        _size++;
+    }
+
+    void reserve(int capacity)
+    {
+        _capacity = capacity;
+
+        T* newData = new T[_capacity];
+
+        // 데이터 복사
+        for (int i = 0; i < _size; i++) // _size 0이면 작동 안하므로 _data nullptr 체크 생략
+            newData[i] = _data[i];
+
+        // 기존에 있던 데이터 날린다
+        if (_data)
+            delete[] _data;
+
+        // 교체
+        _data = newData;
+    }
+
+    T& operator[](const int pos) { return _data[pos]; }
+
+    int size() { return _size; }
+    int capacity() { return _capacity; }
+    void clear() { _size = 0; }
+
+public:
+    typedef Iterator_Vector<T> iterator;
+
+    iterator begin() { return iterator(&_data[0]); }
+    iterator end() { return begin() + _size; }
+
+
+private:
+    T* _data;
+    int _size;
+    int _capacity;
+};
+
+int main12()
+{
+    Vector<int> v;
+
+    v.reserve(100);
+
+    for (int i = 0; i < 100; i++)
+    {
+        v.push_back(i);
+        cout << v.size() << " " << v.capacity() << endl;
+    }
+
+    for (int i = 0; i < v.size(); i++)
+    {
+        cout << v[i] << endl;
+    }
+
+    cout << "----------------" << endl;
+
+    for (Vector<int>::iterator it = v.begin(); it != v.end(); ++it)
+    {
+        cout << *it << endl;
+    }
+
+    return 0;
+}
+#pragma endregion
+#pragma region List(Linked List)
+#include <list>
+// List (연결 리스트)
+// - list의 동작 원리
+// - 중간 삽입/삭제 (효율적) // 물론 중간에 삽입/삭제할 iterator를 찾는다는 것은 비효율적(임의 접근), 중간 데이터 iterator를 알고있다는 전제에서 효율적
+// - 처음/끝 삽입/삭제 (효율적)
+// - 임의 접근 (비효율적)
+
+// 단일 / 이중 / 원형
+// STL list는 이중연결리스트
+// [1] <-> [2] <-> [3] <-> [4] <-> [5] <-> [ _Myhead : end() ] <-> [1] // _Myhead 노드 데이터는 null. 즉, 실제 데이터는 없음, vector처럼 데이터 끝을 표현
+
+// STL list 노드 대략적인 구조
+//class Node
+//{
+//public:
+//    Node*   _next;
+//    Node*   _prev;
+//    int     _data;
+//};
+
+int main13()
+{
+    list<int> li;
+    
+    for (int i = 1; i < 100; i++)
+        li.push_back(i);
+
+    li.push_front(0); // vector와 다르게 가능
+    int size = li.size();
+    //li.capacity() // capacity 개념 없음
+
+    int first = li.front();
+    int last = li.back();
+
+    //li[3] // [] 접근 없음
+
+    list<int>::iterator itBegin = li.begin();
+    list<int>::iterator itEnd = li.end();
+
+    //list<int>::iterator itTest1 = --itBegin; // _Myhead 참조하면 에러
+    //list<int>::iterator itTest2 = ++itEnd; // _Myhead 참조하면 에러
+    list<int>::iterator itTest3 = --itEnd; // 마지막 데이터 가리키는 iterator
+    //list<int>::iterator itTest4 = itBegin + 10; // 빌드 불가, 배열처럼 연속적인 데이터가 아니기때문, 그래도 위처럼 한 노드씩 ++ -- 으로 이동 가능
+    
+    int* ptrBegin = &(li.front());
+    int* ptrEnd = &(li.back());
+
+    for (list<int>::iterator it = li.begin(); it != li.end(); ++it)
+    {
+        cout << *it << endl;
+    }
+
+    li.insert(itBegin, 100);
+    li.pop_front(); //li.erase(li.begin());
+    li.remove(10); // vector는 불가능
+
+    return 0;
+}
+
+// list 구현
+template<typename T>
+class Node
+{
+public:
+    Node() : _next(nullptr), _prev(nullptr), _data(T())
+    {
+
+    }
+    Node(const T& value) : _next(nullptr), _prev(nullptr), _data(value)
+    {
+
+    }
+
+public:
+    Node*   _next;
+    Node*   _prev;
+    T       _data;
+};
+
+template<typename T>
+class Iterator_List // 나중에 따로 구현하면 자료구조별 iterator 공통 부모 클래스 만들어야할듯
+{
+public:
+    Iterator_List() : _node(nullptr)
+    {
+
+    }
+
+    Iterator_List(Node<T>* node) : _node(node)
+    {
+
+    }
+
+    Iterator_List& operator++()
+    {
+        _node = _node->_next;
+        return *this;
+    }
+
+    Iterator_List operator++(int)
+    {
+        Iterator_List<T> temp = *this;
+        _node = _node->_next;
+        return temp;
+    }
+    
+    Iterator_List& operator--()
+    {
+        _node = _node->_prev;
+        return *this;
+    }
+    
+    Iterator_List operator--(int)
+    {
+        Iterator_List<T> temp = *this;
+        _node = _node->_prev;
+        return temp;
+    }
+
+    T& operator*()
+    {
+        return _node->_data;
+    }
+
+    bool operator==(const Iterator_List& right)
+    {
+        return _node == right._node;
+    }
+
+    bool operator!=(const Iterator_List& right)
+    {
+        return !(*this == right);
+    }
+
+public:
+    Node<T>* _node;
+};
+
+template<typename T>
+class List
+{
+public:
+    List() : _size(0)
+    {
+        _Myheader = new Node<T>();
+        _Myheader->_next = _Myheader;
+        _Myheader->_prev = _Myheader;
+    }
+
+    ~List()
+    {
+        while (_size > 0)
+            pop_back();
+
+        delete _Myheader;
+    }
+
+    void push_back(const T& value)
+    {
+        AddNode(_Myheader, value);
+    }
+
+    void pop_back()
+    {
+        RemoveNode(_Myheader->_prev);
+    }
+
+public:
+    typedef Iterator_List<T> iterator;
+
+    iterator begin() { return iterator(_Myheader->_next); }
+    iterator end() { return iterator(_Myheader->_prev); }
+
+    iterator insert(iterator it, const T& value)
+    {
+        return iterator(AddNode(it._node, value));
+    }
+
+    iterator erase(iterator it)
+    {
+        return iterator(RemoveNode(it._node));
+    }
+
+private:
+    // [node] <-> [header] <->
+    // [1] <-> [2]           <->            [before] <-> [4] <-> [header] <->
+    // [1] <-> [2(prevNode)] <-> [node] <-> [before] <-> [4] <-> [header] <->
+    Node<T>* AddNode(Node<T>* before, const T& value)
+    {
+        Node<T>* node = new Node<T>(value);
+
+        Node<T>* prevNode = before->_prev;
+        prevNode->_next = node;
+        node->_prev = prevNode;
+        node->_next = before;
+        before->_prev = node;
+
+        _size++;
+
+        return node;
+    }
+
+    // [1] <-> [prevNode] <-> [node] <-> [nextNode] <-> [4] <-> [header] <->
+    // [1] <-> [prevNode] <->            [nextNode] <-> [4] <-> [header] <->
+    Node<T>* RemoveNode(Node<T>* node)
+    {
+        Node<T>* prevNode = node->_prev;
+        Node<T>* nextNode = node->_next;
+
+        prevNode->_next = nextNode;
+        nextNode->_prev = prevNode;
+        
+        delete node;
+
+        _size--;
+
+        return nextNode;
+    }
+
+public:
+    Node<T>* _Myheader;
+    int _size;
+};
+
+template<typename T>
+using LIST = List<T>;// std:list<T>
+int main14()
+{
+    LIST<int> li;
+
+    LIST<int>::iterator eraseIt;
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 5)
+        {
+            eraseIt = li.insert(li.end(), i);
+        }
+        else
+        {
+            li.push_back(i);
+        }
+    }
+
+    li.pop_back();
+
+    li.erase(eraseIt);
+
+    for (LIST<int>::iterator it = li.begin(); it != li.end(); ++it)
+    {
+        cout << (*it) << endl;
+    }
+
+    return 0;
+}
+#pragma endregion
+#pragma region deque
+#include <deque>
+// 시퀀스 컨테이너 (Sequence Container)
+// 데이터가 삽입 순서대로 나열되는 형태
+// vector list deque
+
+// vector : 동적 배열
+// [        ]
+
+// list : 이중 연결 리스트
+// [ ] <-> [ ] <-> [ ] <-> [ ] <-> [ ]
+
+// deque : double-ended queue 데크
+// [        ] : 기본은 vector처럼 배열
+// [        ] : capacity가 커져야될경우 vector처럼 재할당이 아닌 list처럼 다른 곳에 데이터 영역 할당
+// [        ]
+
+int main15()
+{
+    deque<int> dq;
+
+    dq.push_back(1);
+    dq.push_front(2);
+    cout << dq[0] << endl;
+    // vector와 마찬가지로 배열 기반으로 동작
+    // 다만 메모리 할당 정책이 다르다
+
+    vector<int> v(3, 1); // [1 1 1]
+    deque<int> dq2(3, 1); // [1 1 1]
+
+    v.push_back(2); // [1 1 1] 메모리 날리고   -> [1 1 1 2]
+    v.push_back(2); // [1 1 1 2] 메모리 날리고 -> [1 1 1 2 2]
+    dq2.push_back(2); //            [1 1 1 2]
+    dq2.push_back(2); //            [1 1 1 2] [2      ]
+    dq2.push_front(3); // [      3] [1 1 1 2] [2      ]
+    dq2.push_front(3); // [    3 3] [1 1 1 2] [2      ]
+    // 중간에 데이터 삭제할 경우
+    //                    [    3 3] [1 1   2] [2      ]
+    //                    [    3 3] [1 1 2 2]
+    // 중간에 데이터 삽입할 경우
+    //                    [    3 3] [1 1 (4) 2 2]
+    //                    [  3 3 1] [1 1 4 2] : 데이터 크기가 효율적인 방향으로 칸이동
+
+    // - deque의 동작 원리
+    // - 중간 삽입/삭제 (비효율적 / 비효율적) : vector처럼 통으로 메모리 재할당 하는건 아니지만 삽입/삭제 후 값들을 이동시켜야하므로 list보단 느림
+    // - 처음/끝 삽입/삭제 (효율적 / 효율적)
+    // - 임의 접근 (가능)
+    dq2[3] = 10; // 내부에서 iterator로 해당 값의 블록 및 인덱스 구해서 찾아줌
+    cout << dq2[3] << endl;
+
+    return 0;
+}
+#pragma endregion
+#pragma region map
+#include <map>
+
+// map : 균형 이진 트리 (AVL)
+// - 노드 기반
+
+//class Node
+//{
+//public:
+//    Node* _left;
+//    Node* _right;
+//
+//    //DATA
+//    //int     _key;
+//    //Player* _value;
+//    pair<int, Player*> _data;
+//};
+
+int main16()
+{
+    // vector, list의 치명적인 단점
+    // -> 원하는 조건에 해당하는 데이터를 빠르게 찾을 수 없다.
+    srand(static_cast<unsigned int>(time(nullptr)));
+    map<int, int> m;
+
+    pair<map<int, int>::iterator, bool> ok;
+    ok = m.insert(make_pair(1, 100)); // make_pair(1, 100) == pair<int, int>(1, 100)
+    ok = m.insert(make_pair(1, 200)); // insert 행동은 실패되고 위에 넣었던 100이 유지됨, 즉 넢어쓰지 않음
+
+    for (int i = 0; i < 1000; i++)
+    {
+        m.insert(pair<int, int>(i, i * 100));
+    }
+
+    for (int i = 0; i < 500; i++)
+    {
+        int randomValue = rand() % 500;
+        
+        //m.erase(randomValue);
+    }
+
+    unsigned int count = 0;
+    count = m.erase(100); // 삭제 성공했다면 삭제한 수 만큼 리턴
+    count = m.erase(100);
+
+    map<int, int>::iterator findIt =  m.find(100); // 못찾았으면 m.end() 리턴
+
+    // 없으면 추가, 있으면 수정
+    if (findIt != m.end())
+    {
+        findIt->second = 99;
+        cout << "찾음, 수정함" << endl;
+    }
+    else
+    {
+        m.insert(make_pair(100, 99));
+        cout << "못찾음, 추가함" << endl;
+    }
+
+    // 없으면 추가, 있으면 수정 v2
+    m[100] = 999;
+    // [] 사용에 주의할 점
+    // - 대입을 하지 않더라도 (Key/Value) 형태의 데이터가 추가된다.
+    // - 즉, 찾는게 목적이면 find(~)를 활용
+    m.clear();
+    for (int i = 0; i < 100; i++)
+    {
+        cout << m[i] << endl; //i키값이 없으면 호출할 때 i키값에 빈값(데이터의 기본값)을 넣게됨
+    }
+
+    //// map 순회 : 이러면 vector보다 효율 낮음
+    //for (map<int, int>::iterator it = m.begin(); it != m.end(); ++it)
+    //{
+    //    //pair<const int, int>& p = (*it);
+    //    int key = it->first;
+    //    int value = it->second;
+    //    cout << key << " " << value << endl;
+    //}
+
+    // 중간 수정은 효율적인 자료구조임
+    // 넣고 (insert, [])
+    // 빼고 (erase)
+    // 찾고 (find, [])
+    // 반복자 (map::iterator) (*it) pair<key, value>&
+
+    return 0;
+}
+
+// map의 형제들 : set, multimap, multiset
+// - multi 붙어있으면 중복허용
+#include <set>
+
+int main17()
+{
+    set<int> s; //key가 곧 value
+
+    s.insert(10);
+    s.insert(30);
+    s.insert(20);
+    s.insert(50);
+    s.insert(40);
+    s.insert(70);
+    s.insert(90);
+    s.insert(80);
+    s.insert(100);
+
+    s.erase(40);
+
+    set<int>::iterator findIt_s = s.find(50);
+    if (findIt_s == s.end())
+    {
+        cout << "못찾음" << endl;
+    }
+    else
+    {
+        cout << "찾음" << endl;
+    }
+
+    //s[10] = 10; // 당연히 [] 호출 안됨
+
+    for (set<int>::iterator it = s.begin(); it != s.end(); ++it)
+    {
+        cout << (*it) << endl;
+    }
+
+    cout << "-------------------------------" << endl;
+
+    multimap<int, int> mm;
+    
+    mm.insert(make_pair(1, 100));
+    mm.insert(make_pair(1, 200));
+    mm.insert(make_pair(1, 300));
+    mm.insert(make_pair(2, 400));
+    mm.insert(make_pair(2, 500));
+
+    //mm[1] = 500; // 중복이 있을수있으니 당연히 안됨
+
+    //unsigned int count = mm.erase(1); // 위에 key가 1인 3개 다 삭제되고 3 리턴
+
+    multimap<int, int>::iterator findIt_mm = mm.find(1); // key가 1인 것 중 첫번째
+    if (findIt_mm == mm.end())
+    {
+        cout << "못찾음" << endl;
+    }
+    else
+    {
+        cout << "찾음" << endl;
+        mm.erase(findIt_mm); // key값만 넣은것과 다르게 해당 데이터만 erase, ++findIt_mm 이렇게 넣으면 다음꺼 삭제
+    }
+
+    //여러개 찾을 경우
+    pair<multimap<int, int>::iterator, multimap<int, int>::iterator> itPair;
+    itPair = mm.equal_range(1); // key값이 1인 값들 시작 iterator(1, 200)와 끝나는 다음의 iterator(2, 400) 리턴 // (1, 100)은 위에서 지워줌 ㅎ
+    multimap<int, int>::iterator itPair_Begin = mm.lower_bound(1); // == itPair.first
+    multimap<int, int>::iterator itPair_End = mm.upper_bound(1); // == itPair.second
+    for (multimap<int, int>::iterator it = itPair.first; it != itPair.second; ++it)
+    {
+        cout << it->first << " " << it->second << endl;
+    }
+
+    for (multimap<int, int>::iterator it = mm.begin(); it != mm.end(); ++it)
+    {
+        cout << it->first << " " << it->second << endl;
+    }
+
+    cout << "-------------------------------" << endl;
+
+    multiset<int> ms;
+
+    ms.insert(100);
+    ms.insert(100);
+    ms.insert(100);
+    ms.insert(200);
+    ms.insert(200);
+
+    multiset<int>::iterator findIt_ms = ms.find(100); // 100값을 가진 것 중 첫번째
+
+    auto itPair_ms = ms.equal_range(100);
+    multiset<int>::iterator itPair_ms_Begin = ms.lower_bound(1); // == itPair_ms.first
+    multiset<int>::iterator itPair_ms_End = ms.upper_bound(1); // == itPair_ms.second
+    for (multiset<int>::iterator it = itPair_ms.first; it != itPair_ms.second; ++it)
+    {
+        cout << (*it) << endl;
+    }
+    for (multiset<int>::iterator it = ms.begin(); it != ms.end(); ++it)
+    {
+        cout << (*it) << endl;
+    }
+
+    // 실무에서 multimap, multiset 잘 안쓰임
+    // set은 아주 가끔 쓰임
+
+    return 0;
+}
+#pragma endregion
+#pragma region STL 마무리
+int main18()
+{
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    vector<int> v;
+
+    for (int i = 0; i < 100; i++)
+    {
+        int num = rand() % 100;
+        v.push_back(num);
+    }
+
+    // Q1) number라는 숫자가 벡터에 체크하는 기능 (bool, 첫 등장 iterator)
+    {
+        int number = 50;
+
+        bool found = false;
+        vector<int>::iterator it;
+
+        for (vector<int>::iterator _it = v.begin(); _it != v.end(); ++_it)
+        {
+            if ((*_it) == number)
+            {
+                it = _it;
+                found = true;
+                break;
+            }
+        }
+    }
+
+    // Q2) 11로 나뉘는 숫자가 벡터에 있는지 체크하는 기능 (bool, 첫 등장 iterator)
+    {
+        bool found = false;
+        vector<int>::iterator it;
+
+        for (vector<int>::iterator _it = v.begin(); _it != v.end(); ++_it)
+        {
+            if ((*_it) != 0 && (*_it) % 11 == 0)
+            {
+                it = _it;
+                found = true;
+                cout << "11로 나뉘는 숫자 존재 확인 : " << (*it) << endl;
+                break;
+            }
+        }
+    }
+
+    // Q3) 홀수인 숫자의 개수는?
+    {
+        int count = 0;
+
+        for (vector<int>::iterator _it = v.begin(); _it != v.end(); ++_it)
+        {
+            if ((*_it) % 2 > 0)
+            {
+                count++;
+            }
+        }
+        cout << "홀수인 숫자 : " << count << "개" << endl;
+    }
+
+    // Q4) 벡터에 들어가 있는 모든 숫자들에 3을 곱해주세요!
+    {
+        cout << "v {";
+        for (int i = 0; i < v.size(); i++)
+        {
+            cout << v[i] << "->";
+            v[i] *= 3;
+            cout << v[i] << ", ";
+        }
+        cout << "}" << endl;
+    }
+
+    return 0;
+}
+
+#pragma endregion
 
 int main()
 {
     //TextRPG();
-    main7();
+    main18();
+
     return 0;
 }
