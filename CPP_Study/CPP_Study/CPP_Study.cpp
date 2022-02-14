@@ -2479,7 +2479,22 @@ int main17()
     return 0;
 }
 #pragma endregion
-#pragma region STL 마무리
+#pragma region STL 마무리, 알고리즘
+#include <algorithm>
+// 자료구조 (데이터를 저장하는 구조)
+// 알고리즘 (데이터를 어떻게 사용할 것인가?)
+
+// find
+// find_if
+// count
+// count_if
+// all_of
+// any_of
+// none_of
+// for_Each
+// remove
+// remove_if
+
 int main18()
 {
     srand(static_cast<unsigned int>(time(nullptr)));
@@ -2498,7 +2513,7 @@ int main18()
 
         bool found = false;
         vector<int>::iterator it;
-
+        // A1
         for (vector<int>::iterator _it = v.begin(); _it != v.end(); ++_it)
         {
             if ((*_it) == number)
@@ -2508,6 +2523,16 @@ int main18()
                 break;
             }
         }
+        // A2
+        auto itFind = std::find(v.begin(), v.end(), number);
+        if (itFind == v.end())
+        {
+            cout << "못찾음" << endl;
+        }
+        else
+        {
+            cout << "찾음" << endl;
+        }
     }
 
     // Q2) 11로 나뉘는 숫자가 벡터에 있는지 체크하는 기능 (bool, 첫 등장 iterator)
@@ -2515,6 +2540,7 @@ int main18()
         bool found = false;
         vector<int>::iterator it;
 
+        //A1
         for (vector<int>::iterator _it = v.begin(); _it != v.end(); ++_it)
         {
             if ((*_it) != 0 && (*_it) % 11 == 0)
@@ -2525,33 +2551,910 @@ int main18()
                 break;
             }
         }
+        //A2
+        struct CanDivideByNumber
+        {
+            CanDivideByNumber(int _num) : num(_num) {}
+            int num;
+            bool operator()(int n)
+            {
+                return (n % num) == 0;
+            }
+        };
+        auto itFind = std::find_if(v.begin(), v.end(), CanDivideByNumber(11)); // CanDivideByNumber(11) -> [](int n) { return (n % 11) == 0; } // 람다식 표현
+        if (itFind == v.end())
+        {
+            cout << "못찾음" << endl;
+        }
+        else
+        {
+            cout << "찾음" << endl;
+            cout << "11로 나뉘는 숫자 존재 확인 : " << (*itFind) << endl;
+        }
     }
 
     // Q3) 홀수인 숫자의 개수는?
     {
         int count = 0;
-
+        // A1
         for (vector<int>::iterator _it = v.begin(); _it != v.end(); ++_it)
         {
-            if ((*_it) % 2 > 0)
+            if ((*_it) % 2 != 0)
             {
                 count++;
             }
         }
         cout << "홀수인 숫자 : " << count << "개" << endl;
+        // A2
+        auto count_if_result = std::count_if(v.begin(), v.end(), [](int n) { return n % 2 != 0; });
+        cout << "홀수인 숫자 : " << count_if_result << "개" << endl;
+
+        bool b1 = std::all_of(v.begin(), v.end(), [](int n) { return n % 2 != 0; }); // 모두가 홀수인지 확인
+        bool b2 = std::any_of(v.begin(), v.end(), [](int n) { return n % 2 != 0; }); // 홀수인 데이터가 하나라도 있는가
+        bool b3 = std::none_of(v.begin(), v.end(), [](int n) { return n % 2 != 0; }); // 홀수인 데이터가 하나도 없는가
     }
 
     // Q4) 벡터에 들어가 있는 모든 숫자들에 3을 곱해주세요!
     {
-        cout << "v {";
-        for (int i = 0; i < v.size(); i++)
+        // A1
+        /*for (int i = 0; i < v.size(); i++)
         {
-            cout << v[i] << "->";
             v[i] *= 3;
-            cout << v[i] << ", ";
-        }
-        cout << "}" << endl;
+        }*/
+        // A2
+        std::for_each(v.begin(), v.end(), [](int& n) { n *= 3; });
     }
+    
+    // Q5) 홀수인 데이터 일괄 삭제
+    {
+        // A1
+        for (vector<int>::iterator it = v.begin(); it != v.end();)
+        {
+            if ((*it) % 2 != 0)
+                it = v.erase(it);
+            else
+                ++it;
+        }
+        // A2
+
+    }
+
+    {
+        v.clear();
+        v.push_back(1);
+        v.push_back(4);
+        v.push_back(3);
+        v.push_back(5);
+        v.push_back(8);
+        v.push_back(2);
+
+        // 1 4 3 5 8 2
+        //std::remove(v.begin(), v.end(), 4);
+        auto remove_if_result = std::remove_if(v.begin(), v.end(), [](int n) { return (n % 2) != 0; });
+        // 1 4 3 5 8 2
+        // 4 8 2 5 8 2
+        // remove_if는 여기서 5를 가리키는 iterator 리턴
+        v.erase(remove_if_result, v.end());
+        // v.erase(remove_if(v.begin(), v.end(), [](int n) { return (n % 2) != 0; }), v.end()); // 위 내용을 한줄로
+        int a = 3;
+    }
+
+
+    return 0;
+}
+
+#pragma endregion
+#pragma region Modern C++ (C++11 이후)
+class ModernKnight
+{
+public:
+    ModernKnight() {}
+    ModernKnight(int a, int b)
+    {
+        cout << "ModernKnight(int, int)" << endl;
+    }
+    ModernKnight(initializer_list<int> li)
+    {
+        cout << "ModernKnight(initializer_list)" << endl;
+    }
+};
+int main19()
+{
+    typedef ModernKnight Knight;
+    // auto
+    
+    //int a = 3;
+    //float b = 3.14f;
+    //double c = 1.23;
+    //Knight d = Knight();
+    //const char* e = "HelloWorld";
+    auto a = 3;
+    auto b = 3.14f;
+    auto c = 1.23;
+    auto d = Knight();
+    auto e = "HelloWorld";
+
+    // type deduction(형식 연역)
+    // 추론 규칙은 생각보다 복잡해질 수 있다
+    auto f = &d;
+    const auto test1 = b;
+    auto* test2 = e;
+    //auto* test3 = a; // 에러
+    
+    // 주의!
+    // 기본 auto는 const, &가 무시됨 !!!!!!!!!
+    int& reference = a;
+    const int cst = a;
+    auto test4 = reference;
+    auto test5 = cst;
+
+    vector<int> v;
+    v.push_back(1);
+    v.push_back(2);
+    v.push_back(3);
+    for (vector<int>::size_type i = 0; i < v.size(); i++)
+    {
+        auto data = v[i]; //auto가 int&가 아닌 int로 인식되서 값 수정이 안됨. auto& 사용
+
+        data = 10;;
+    }
+
+    // ----------------------------------------------------------------------------------------------------
+    // 중괄호 초기화
+    int n1 = 0;
+    int n2(0);
+    int n3{ 0 };
+
+    Knight k1;
+    Knight k2 = k1; // 복사 생성자 (대입 연산자X)
+    Knight k3(k1); // 복사 생성자
+    Knight k4{ k1 }; // 복사 생성자
+
+    vector<int> v1;
+    v1.push_back(1);
+    v1.push_back(2);
+    v1.push_back(3);
+    vector<int> v2(3, 1); // 그냥 값 1인거 3개
+    vector<int> v3{ 1, 2, 3 }; // 원래 안됬었던듯
+
+    // 중괄호 초기화
+    // 1) vector 등 container와 잘 어울린다
+    
+    // 2) 축소 변환 방지
+    int num = 0;
+    double d1(num);
+    // double d2{ num }; // 빌드하면 축소 변환 필요하다고 에러뜸
+    
+    // 3) Bonus
+    Knight k5(); // 기본 생성자가 아님, 함수를 선언한 격
+    Knight k6{ }; // 기본 생성자 출력
+    Knight k7{ 1, 2, 3, 4, 5 }; //initializer_list 생성자 없으면 에러
+    Knight k8{ 1, 2 }; // (int, int) 생성자가 아닌 initializer_list 생성자 호출됨. 애초에 { } 가 배열개념이니 당연한거 아닌가 라고 생각했지만 그렇다면 위에 빈값이 기본 생성자 호출하는것도 웃기고
+
+    //개인적인 의견 : 배열, STL 컨테이너 아닌 이상 큰 의미 없는거 같고 클래스도 Knight k9( { 1, 2, 3 } ) 그냥 이런식으로 가는게 생성자 유추가 쉬워 가독성이 좋아보임
+    return 0;
+}
+// ----------------------------------------------------------------------------------------------------
+class NullCheckKnight
+{
+public:
+    void Test() {}
+};
+NullCheckKnight* FindKnight()
+{
+    return nullptr;
+}
+void Test(int a) { cout << "Test(int)" << endl; }
+void Test(void* ptr) { cout << "Test(*)" << endl; }
+
+// NullPtr 구현
+const class
+{
+public:
+    // 그 어떤 타입의 포인터와도 치환 가능
+    template<typename T>
+    operator T* () const
+    {
+        cout << "operator T* ()" << endl;
+        return 0;
+    }
+    // 그 어떤 타입의 멤버 포인터와도 치환 가능
+    template<typename C, typename T>
+    operator T C::* () const
+    {
+        cout << "operator T C::* ()" << endl;
+        return 0;
+    }
+private:
+    void operator&() const; // 주소값 참조 막기
+} _NullPtr;
+//const NullPtr _NullPtr;
+
+int main20()
+{
+    typedef NullCheckKnight Knight;
+    // nullptr
+    // 기존에는 0, NULL(이것도 그냥 0) 사용
+    int* ptr = NULL;
+
+    // 1) 오동작
+    Test(0); // Test(int) 호출
+    Test(NULL); // Test(int) 호출
+    Test(_NullPtr); // Test(*) 호출
+
+    // 2) 가독성
+    auto knight = FindKnight();
+    if (knight == _NullPtr) // (knight == NULL) 이게 int형 오퍼레이터 가지고있으면 골때리게됨
+    {
+
+    }
+
+    void (Knight:: * memFunc)();
+    memFunc = &Knight::Test;
+    if (memFunc == _NullPtr)
+    {
+
+    }
+    //nullptr_t whoami = nullptr;
+
+    // ----------------------------------------------------------------------------------------------------
+    return 0;
+}
+
+
+// using
+typedef __int64 id;
+using id2 = int;
+
+// 1) 직관성
+typedef void (*MyFunc)();
+using MyFunc2 = void(*)();
+
+// 2) 템플릿
+template<typename T>
+using DefList2 = std::list<T>;
+//typedef로 아래처럼 활용 할 수 있으나 이제는 안쓰임
+template<typename T>
+struct DefList
+{
+    typedef std::list<T> type;
+};
+
+
+// enum class (scoped enum)
+// 1) 이름공간 관리 (scoped)
+// 2) 암묵적인 변환 금지(장점이자 단점)
+
+// 기존 enum : unscoped enum (범위없는)
+enum PlayerType : char // 이렇게 특정 안하면 기본적으로 int
+{
+    None,
+    PT_Knight,
+    PT_Archer,
+    PT_Mage
+};
+enum MonsterType
+{
+    //None, // PlayerType::None 때문에 재정의하라고 빌드에러뜸
+};
+
+enum class ObjectType
+{
+    Player,
+    Monster,
+    Projectile
+};
+enum class ObjectType2 // 기존 enum과 다르게 재정의 에러 없음
+{
+    Player,
+    Monster,
+    Projectile
+};
+
+int main21()
+{
+    double dValue1 = PT_Knight;
+    //double dValue2 = ObjectType::Player; //암묵적인 변환 불가, static_cast<doulbe> 같은거 붙혀서 억지로 가능
+
+    int choice;
+    cin >> choice;
+    if (choice == static_cast<int>(ObjectType::Monster))
+    {
+
+    }
+    // 즉, enum class는 자신을 타입으로 받음, 형변환 필요
+    return 0;
+}
+
+
+// delete (삭제된 함수)
+
+class DKnight
+{
+public:
+
+private:
+    void operator=(const DKnight& k);
+    friend class Admin;
+
+private:
+    int _hp = 100;
+};
+class DKnight2
+{
+public:
+    void operator=(const DKnight2& k) = delete;
+private:
+    int _hp = 100;
+};
+
+class Admin
+{
+public:
+    void CopyKnight(const DKnight& k)
+    {
+        DKnight k1;
+        k1 = k; // friend class 등록으로 가능해짐, 하지만 구현부가 없어서 빌드하면 에러
+    }
+    void CopyKnight(const DKnight2& k)
+    {
+        DKnight2 k2;
+        //k2 = k; // 삭제된 함수라며 에러
+    }
+
+};
+
+int main22()
+{
+    DKnight k1;
+    DKnight k2;
+    //k1 = k2; private으로 해서 에러
+    Admin admin;
+    //admin.CopyKnight(k1); // DKnight operator=() 구현부가 없어서 빌드에러
+    DKnight2 k3;
+    admin.CopyKnight(k3);
+
+    return 0;
+}
+
+
+// override, final
+
+class OFCreature
+{
+public:
+    virtual void Generate()
+    {
+
+    }
+};
+
+class OFPlayer : public OFCreature
+{
+public:
+    virtual void Attack()
+    {
+        cout << "Player!" << endl;
+    }
+    virtual void Generate() override final
+    {
+        
+    }
+};
+class OFKnight : public OFPlayer
+{
+public:
+    // 재정의 (override)
+    virtual void Attack() override // 이 함수가 최초 가상함수가 아니라는 것을 알 수 있게 되었다. 부모클래스에 가상함수 없으면 override 에러뜸
+    {
+        cout << "Knight!" << endl;
+    }
+
+    // overloading
+    void Attack() const // 다른 매개변수 취급으로 overloading되는듯
+    {
+        //_stamina = 10; //const 키워드 때문에 에러, const 키워드 함수는 내부 함수 데이터 변경 불가능
+    }
+    void Attack(int a)
+    {
+        cout << "Knight(int)!" << endl;
+    }
+
+    //virtual void Generate(); // final 키워드 때문에 재정의 불가능
+private:
+    int _stamina = 100;
+};
+
+int main23()
+{
+    using Player = OFPlayer;
+    using Knight = OFKnight;
+
+    Player* player = new Knight();
+    player->Attack();
+
+
+    return 0;
+}
+
+// 오른값(rvalue) 참조와 std::move
+// Modern C++11 에서 가장 중요한 변경점
+
+// 왼값(lvalue) vs 오른값(rvalue)
+// - lvalue : 단일식을 넘어서 계속 지속되는 개체
+// - rvalue : lvaㅣue가 아닌 나머지 (임시 값, 열거형, 람다, i++ 등)
+
+class RLPet
+{
+public:
+};
+class RLKnight
+{
+public:
+    RLKnight()
+    {
+        cout << "Knight()" << endl;
+    }
+    // 복사 생성자
+    RLKnight(const RLKnight& knight)
+    {
+        cout << "const Knight&" << endl;
+    }
+    // 이동 생성자
+    RLKnight(RLKnight&& knight)
+    {
+
+    }
+
+    ~RLKnight()
+    {
+        if (_pet)
+            delete _pet;
+    }
+
+    // 복사 대입 연산자
+    void operator=(const RLKnight& knight)
+    {
+        cout << "operator=(const Knight&)" << endl;
+
+        _hp = knight._hp;
+        // 깊은 복사, class 크기가 커짐에 따라 비용이 많이 발생할 수 있음
+        if (knight._pet)
+            _pet = new RLPet(*knight._pet);
+    }
+    // 이동 대입 연산자
+    void operator=(RLKnight&& knight) noexcept
+    {
+        cout << "operator=(Knight&&)" << endl;
+
+        _hp = knight._hp;
+        _pet = knight._pet; // 굳이 깊은 복사를 할 필요가 없음. 어차피 사라질꺼 뺏어온다는 개념
+
+        knight._pet = nullptr; // 소멸자에서 delete되는거 방지
+    }
+
+public:
+    int _hp = 100;
+    RLPet* _pet = nullptr;
+};
+
+void TestKnight_Copy(RLKnight knight) { }
+void TestKnight_LValueRef(RLKnight& knight) { } // 읽기, 쓰기 가능
+void TestKnight_ConstLValueRef(const RLKnight& knight) { } // 읽기만 가능
+void TestKnight_RValueRef(RLKnight&& knight) { } // 원본유지가 어차피 안되니 읽기쓰기 다 가능, 이동 대상!
+int main24()
+{
+    RLKnight k1;
+
+    TestKnight_Copy(k1);
+
+    TestKnight_LValueRef(k1);
+    //TestKnight_LValueRef(Knight()); // 컴파일러에서 문법적으로 허용안함
+
+    TestKnight_ConstLValueRef(RLKnight());
+
+    //TestKnight_RValueRef(k1); // 에러
+    TestKnight_RValueRef(RLKnight());
+    TestKnight_RValueRef(static_cast<RLKnight&&>(k1)); //어거지로 캐스팅해서 사용은 가능
+
+    RLKnight k2;
+    k2._pet = new RLPet();
+    k2._hp = 1000;
+
+    RLKnight k3;
+    // 오른값 참조로 캐스팅
+    k3 = std::move(k2); //k3 = static_cast<RLKnight&&>(k2); 와 같은 의미
+    // std::move의 본래 이름 후보 중 하나가 rvalue_cast
+
+    // 자주쓰이는 예) unique_ptr 이동
+    std::unique_ptr<RLKnight> uptr = std::make_unique<RLKnight>(); // 프로그램상 단 하나만 존재해야하는 포인터
+    //std::unique_ptr<RLKnight> uptr2 = uptr; // 복사관련 함수들이 delete 되어있어서 에러
+    std::unique_ptr<RLKnight> uptr2 = std::move(uptr);
+
+    // 코어 라이브러리에서는 자주 쓰이는 문법
+
+    return 0;
+}
+
+
+// 전달 참조(forwarding reference) C++17
+// 옛날엔 보편 참조(universal reference) 라고도 불렸음
+
+// && - 무조건 오른값 참조인건 아님
+
+class FRKnight
+{
+public:
+    FRKnight() { cout << "기본 생성자" << endl; }
+    FRKnight(const FRKnight&) { cout << "복사 생성자" << endl; }
+    FRKnight(FRKnight&&) noexcept { cout << "이동 생성자" << endl; }
+};
+void Test_Copy(FRKnight k)
+{
+    // 어떤 생성자가 사용되는지 지켜보기
+}
+void Test_RValueRef(FRKnight&& k) // 오른값 참조
+{
+
+}
+template<typename T>
+void Test_ForwardRef(T&& param) // 전달참조 (왼값 참조와 오른값 참조 동시에 처리 가능)
+{
+    //if (~)
+    //    // 왼값 참조라면 복사
+    //    Test_Copy(param); // 복사 생성자 호출
+    //else
+    //    // 오른값 참조라면 이동
+    //    Test_Copy(std::move(param)); // 이동 생성자 호출
+
+    // 위 내용을 한줄로
+    Test_Copy(std::forward<T>(param));
+}
+template<typename T>
+void Test_ConstRValueRef(const T&& param) // const같은 추가 키워드가 붙으면 전달참조가 아닌 오른값 참조가 됨
+{
+
+}
+int main25()
+{
+    FRKnight k1;
+    Test_RValueRef(std::move(k1)); // rvalue_cast
+    Test_ForwardRef(std::move(k1));
+    Test_ForwardRef(k1);
+    Test_ConstRValueRef(std::move(k1));
+    //Test_ConstRValueRef(k1); //에러
+
+    auto&& k2 = k1;
+    auto&& k3 = std::move(k1);
+
+    // 공통점 : 형식 연역 (type deduction)이 일어날 때 (auto, template)
+
+    // 전달 참조 구문하는 방법
+    FRKnight& k4 = k1; // 왼값 참조
+    FRKnight&& k5 = std::move(k1);
+
+    // 오른값 : 왼값이 아니다 = 단일식에서 벗어나면 사용 불가
+    // 오른값 참조 : 오른값만 참조할 수 있는 참조 타입
+    //Test_RValueRef(k5); //에러, k5 타입은 오른값 참조형이긴 하지만 k5 자체는 오른값이 아닌 왼값이라 에러남(선언되어 단독적으로 사용 가능하므로 왼값임)
+    Test_RValueRef(std::move(k5));
+
+    return 0;
+}
+
+// 람다(lambda)
+// 함수 객체를 빠르게 만드는 문법
+enum class LItemType
+{
+    None,
+    Armor,
+    Weapon,
+    Jewelry,
+    Consumable,
+};
+enum class LRarity
+{
+    Common,
+    Rare,
+    Unique
+};
+class LItem
+{
+public:
+    LItem() { }
+    LItem(int itemId, LRarity rarity, LItemType type)
+        : _itemId(itemId), _rarity(rarity), _type(type)
+    {
+
+    }
+public:
+    int _itemId = 0;
+    LRarity _rarity = LRarity::Common;
+    LItemType _type = LItemType::None;
+};
+
+int main26()
+{
+    vector<LItem> v;
+    v.push_back(LItem(1, LRarity::Common, LItemType::Weapon));
+    v.push_back(LItem(2, LRarity::Common, LItemType::Armor));
+    v.push_back(LItem(3, LRarity::Rare, LItemType::Jewelry));
+    v.push_back(LItem(4, LRarity::Unique, LItemType::Weapon));
+
+    // 람다 = 함수 객체를 손쉽게 만드는 문법
+    // 람다 자체로 C++11에 '새로운' 기능이 들어간 것은 아니다.
+    {
+        struct IsUniqueItem
+        {
+            bool operator()(LItem& item)
+            {
+                return item._rarity == LRarity::Unique;
+            }
+        };
+
+        // 클로저 (closure) = 람에 의해 만들어진 실행시점 객체
+        auto isUniqueLambda = [](LItem& item) { return item._rarity == LRarity::Unique; }; // 람다 표현식(lambda expression)
+        //                    [](LItem& item) -> int { return item._rarity == LRarity::Unique; }; // 이러면 boolean이 아닌 int값 return
+
+        auto findIt = std::find_if(v.begin(), v.end(), IsUniqueItem());
+        if (findIt != v.end())
+            cout << "아이템ID:" << findIt->_itemId << endl;
+        findIt = std::find_if(v.begin(), v.end(), isUniqueLambda);
+        if (findIt != v.end())
+            cout << "아이템ID:" << findIt->_itemId << endl;
+    }
+    {
+        struct FindItemByItemId
+        {
+            FindItemByItemId(int itemId) : _itemId(itemId) { }
+            bool operator()(LItem& item)
+            {
+                return item._itemId == _itemId;
+            }
+
+            int _itemId;
+        };
+
+        int itemId = 4;
+        // [ ] 캡처(capture) : 함수 객체 내부에 변수를 저장하는 개념과 유사
+        // 일종의 스냅샷
+        // 기본 캡처 모드 : 복사 방식(=) 참조 방식(&)
+        auto findByItemIdLambda = [&](LItem& item) { return item._itemId == itemId; }; // & -> = 으로 하면 위 4 값으로 고정되어 들어감
+        itemId = 3;
+        auto findIt = std::find_if(v.begin(), v.end(), FindItemByItemId(itemId));
+        if (findIt != v.end())
+            cout << "아이템ID:" << findIt->_itemId << endl;
+        findIt = std::find_if(v.begin(), v.end(), findByItemIdLambda);
+        if (findIt != v.end())
+            cout << "아이템ID:" << findIt->_itemId << endl;
+    }
+
+    {
+        struct FindItem
+        {
+            FindItem(int itemId, LRarity rarity, LItemType type)
+                : _itemId(itemId), _rarity(rarity), _type(type)
+            {
+
+            }
+            bool operator()(LItem& item)
+            {
+                return item._itemId == _itemId && item._rarity == _rarity && item._type == _type;
+            }
+
+            int _itemId;
+            LRarity _rarity;
+            LItemType _type;
+        };
+
+        int itemId = 4;
+        LRarity rarity = LRarity::Unique;
+        LItemType type = LItemType::Weapon;
+
+        // 변수마다 캡처모드를 지정해서 사용 가능
+        auto findByItemLambda = [=, &type](LItem& item) // == [itemId, rarity, &type](LItem& item) // C++에선 = 또는 & 로 통일하는 것을 지양함
+        {
+            return item._itemId == itemId && item._rarity == rarity && item._type == type;
+        };
+        
+        auto findIt = std::find_if(v.begin(), v.end(), FindItem(itemId, rarity, type));
+        if (findIt != v.end())
+            cout << "아이템ID:" << findIt->_itemId << endl;
+        findIt = std::find_if(v.begin(), v.end(), findByItemLambda);
+        if (findIt != v.end())
+            cout << "아이템ID:" << findIt->_itemId << endl;
+    }
+
+    {
+        class Knight
+        {
+        public:
+            auto ResetHpJob()
+            {
+                auto f = [this]() // =, & 가 아닌 변수를 명시해서 가시성을 확보하여 오류 예방
+                {
+                    this->_hp = 200; 
+                };
+
+                return f;
+            }
+        public:
+            int _hp = 100;
+        };
+
+        /*class Functor
+        {
+        public:
+            Functor(Knight* k) : _knight(k)
+            {
+
+            }
+
+            void operator()()
+            {
+                _knight->_hp = 200;
+            }
+
+        public:
+            Knight* _knight;
+        };*/
+
+        Knight* k = new Knight();
+        auto job = k->ResetHpJob();
+        delete k;
+        job(); // 엉뚱한 메모리를 참조하지만 crash가 안나기 때문에 조심!
+    }
+
+    // [캡처](인자값){구현부}ㅡ
+
+    return 0;
+}
+
+// 스마트 포인터 (smart pointer)
+// 멀티스레드 환경에서 atomic이랑 큰 연관이 있음
+// 스마트 포인터 : 포인터를 알맞는 정책에 따라 관리하는 객체 (포인터를 래핑해서 사용)
+// shared_ptr, weak_ptr, unique_ptr
+
+class RefCountBlock
+{
+public:
+    int _refCount = 1;
+    int _weakCount = 1;
+};
+
+template<typename T>
+class SharedPtr
+{
+public:
+    SharedPtr() {}
+    SharedPtr(T* ptr) : _ptr(ptr)
+    {
+        if (_ptr != nullptr)
+        {
+            _block = new RefCountBlock();
+            cout << "RefCount : " << _block->_refCount << endl;
+        }
+    }
+    SharedPtr(const SharedPtr& sptr) : _ptr(sptr._ptr), _block(sptr._block)
+    {
+        if (_ptr != nullptr)
+        {
+            _block->_refCount++;
+            cout << "RefCount : " << _block->_refCount << endl;
+        }
+    }
+    ~SharedPtr()
+    {
+        if (_ptr != nullptr)
+        {
+            _block->_refCount--;
+            cout << "RefCount : " << _block->_refCount << endl;
+
+            if (_block->_refCount == 0)
+            {
+                delete _ptr;
+                delete _block;
+                cout << "Delete Ptr" << endl;
+            }
+        }
+    }
+
+    void operator=(const SharedPtr& sptr)
+    {
+        _ptr = sptr._ptr;
+        _block = sptr._block;
+        if (_ptr != nullptr)
+        {
+            _block->_refCount++;
+            cout << "RefCount : " << _block->_refCount << endl;
+        }
+    }
+public:
+    T* _ptr = nullptr;
+    RefCountBlock* _block = nullptr;
+};
+
+int main27()
+{
+    class Knight
+    {
+    public:
+        Knight() { cout << "Knight 생성" << endl; }
+        ~Knight() { cout << "Knight 소멸" << endl; }
+        void Attack()
+        {
+            if (_target)
+            {
+                _target->_hp -= _damage;
+                cout << "Target HP : " << _target->_hp << endl;
+            }
+            if (_shared_target)
+            {
+                _shared_target->_hp -= _damage;
+                cout << "Target HP : " << _shared_target->_hp << endl;
+            }
+            if (_weak_target.expired() == false)
+            {
+                shared_ptr<Knight> sptr = _weak_target.lock();
+                sptr->_hp -= _damage;
+                cout << "Target HP : " << sptr->_hp << endl;
+            }
+        }
+    public:
+        int _hp = 100;
+        int _damage = 10;
+        Knight* _target = nullptr;
+        shared_ptr<Knight> _shared_target = nullptr; // 성능은 스마트포인터가 낮지만 안정성 때문에
+        weak_ptr<Knight> _weak_target; // 객체 존재여부 확인용, weak_ptr 자체로는 직접적으로 생명주기에 관여하지 않음, 참조 카운터 순환 방지됨
+    };
+
+    Knight* k1 = new Knight();
+    Knight* k2 = new Knight();
+
+    k1->_target = k2;
+
+    delete k2; // k2 데이터는 지워졌지만 k1에서 가지고있는 메모리 주소는 지워지지 않음
+
+    k1->Attack();
+
+
+    SharedPtr<Knight> k3;
+    {
+        SharedPtr<Knight> k1(new Knight);
+        k3 = k1;
+    }
+
+    shared_ptr<Knight> k4 = make_shared<Knight>();
+    {
+        shared_ptr<Knight> k1 = make_shared<Knight>();
+        k4->_shared_target = k1;
+    }
+    k4->Attack();
+
+    cout << "--------- 참조 카운터 순환 문제 확인 --------" << endl;
+    {
+        // 참조 카운터 순환으로 인한 메모리 삭제 안되는 문제발생 가능
+        shared_ptr<Knight> k5 = make_shared<Knight>(); // k5 [1], k6[0]
+        shared_ptr<Knight> k6 = make_shared<Knight>(); // k5 [1], k6[1]
+        k5->_shared_target = k6; // k5 [1], k6[2]
+        k6->_shared_target = k5; // k5 [2], k6[2]
+        // 이 상태로 끝나면 서로 소멸해도 참조 카운터가 1씩 남아서 메모리 삭제가 안됨 k5 [1], k6[1]
+        k5->_shared_target = nullptr;
+        k6->_shared_target = nullptr;
+        // k5 [0], k6 [0]
+    }
+
+    cout << "--------- weak_ptr로 메모리 잘 정리되는지 확인 --------" << endl;
+    {
+        shared_ptr<Knight> k5 = make_shared<Knight>(); // k5 [1], k6[0]
+        shared_ptr<Knight> k6 = make_shared<Knight>(); // k5 [1], k6[1]
+        k5->_weak_target = k6; // k5 [1], k6[2]
+        k6->_weak_target = k5; // k5 [2], k6[2]
+    }
+    cout << "-----------------" << endl;
+
+    unique_ptr<Knight> uptr = make_unique<Knight>();
+    //unique_ptr<Knight> uptr2 = uptr; // 에러
+    unique_ptr<Knight> uptr2 = std::move(uptr); // uptr은 empty가 됨
 
     return 0;
 }
@@ -2561,7 +3464,7 @@ int main18()
 int main()
 {
     //TextRPG();
-    main18();
+    main27();
 
     return 0;
 }
