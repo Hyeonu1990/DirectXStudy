@@ -4,6 +4,8 @@
 #include <Windows.h>
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <map>
 using namespace std;
 
 struct Pos
@@ -15,7 +17,15 @@ struct Pos
 
 	bool operator!=(Pos& other)
 	{
-		return!(*this == other);
+		return y != other.y || x != other.x;
+	}
+
+	// map 내부에서 비교하는 로직이 있어서 없으면 빌드에러
+	bool operator<(const Pos& other) const
+	{
+		if (y != other.y)
+			return y < other.y;
+		return x < other.x;
 	}
 
 	Pos operator+(Pos& other)
