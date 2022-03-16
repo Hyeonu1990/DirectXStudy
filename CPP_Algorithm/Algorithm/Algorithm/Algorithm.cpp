@@ -12,10 +12,11 @@
 // 
 // [큐] O(1) // list 방식으로 만들어졌을 경우
 // 
-// PriorityQueue O(logN)
-// Red-Black Tree O(logN)
+// PriorityQueue 삽입/삭제 O(logN)
+// Red-Black Tree 삽입/삭제 O(logN)
 // 
-// 기본정렬(버블, 선택, 삽입) O(N^2)
+// 기본정렬(버블정렬, 선택정렬, 삽입정렬) O(N^2)
+// 힙정렬, 병합정렬 O(NLogN)
 // 
 #pragma endregion
 
@@ -28,9 +29,9 @@ using namespace std;
 #include <thread>
 
 
-
 int main()
 {
-    
+
+
     return 0;
 }
