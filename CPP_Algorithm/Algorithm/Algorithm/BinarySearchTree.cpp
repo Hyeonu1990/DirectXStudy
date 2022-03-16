@@ -359,6 +359,8 @@ void BinarySearchTree::DeleteFixup(Node* node)
 	// -- far = black
 	// -- rotate(p) (DB방향으로)
 	// -- 추가 Black 제거
+	// 
+	// ** 결론 ** 달달 외울필요는 없고 RBT 규칙을 지키기 위해 이런 동작들을 한다~ 정도?
 
 	Node* x = node;
 
@@ -371,7 +373,7 @@ void BinarySearchTree::DeleteFixup(Node* node)
 		{
 			// [Case3]
 			Node* s = x->parent->right;
-			if (x->color == Color::Red)
+			if (s->color == Color::Red)
 			{
 				//         [p(B)]
 				//   [x(B)]      [s(R)]
@@ -382,8 +384,9 @@ void BinarySearchTree::DeleteFixup(Node* node)
 				//  [x(B)]
 				s->color = Color::Black;
 				x->parent->color = Color::Red;
-
 				LeftRotate(x->parent);
+
+				s = x->parent->right; // [1]
 			}
 
 			// [Case4]
@@ -392,10 +395,95 @@ void BinarySearchTree::DeleteFixup(Node* node)
 				s->color = Color::Red;
 				x = x->parent;
 			}
+			else
+			{
+				//            [p]
+				//   [x(DB)]         [s(B)]
+				//            [near(R)]  [far(B)]
+				
+				// [Case5]
+				if (s->right->color == Color::Black)
+				{
+					//          [p]
+					//   [x(DB)]    [near(B)]
+					//				     [s(R)]
+					//						[far(B)]
+					s->left->color = Color::Black;
+					s->color = Color::Red;
+					RightRotate(s);
+
+					s = x->parent->right;
+				}
+
+				//          [p]
+				//   [x(DB)]    [s(B)]
+				//				     [far(R)]
+
+				// [Case6]
+				s->color = x->parent->color;
+				x->parent->color = Color::Black;
+				s->right->color = Color::Black;
+				LeftRotate(x->parent);
+				x = _root;
+			}
 		}
 		else
 		{
+			// [Case3]
+			Node* s = x->parent->left;
+			if (s->color == Color::Red)
+			{
+				//         [p(B)]
+				//   [s(R)]      [x(B)]
+				//           l
+				//           V
+				//         [s(B)]
+				//             [p(R)]
+				//                [x(B)]
+				s->color = Color::Black;
+				x->parent->color = Color::Red;
+				RightRotate(x->parent);
 
+				s = x->parent->left; // [1]
+			}
+
+			// [Case4]
+			if (s->right->color == Color::Black && s->left->color == Color::Black)
+			{
+				s->color = Color::Red;
+				x = x->parent;
+			}
+			else
+			{
+				//                  [p]
+				//         [s(B)]           [x(DB)] 
+				// [near(B)]  [far(R)]
+
+				// [Case5]
+				if (s->left->color == Color::Black)
+				{
+					//                  [p]
+					//        [far(B)]      [x(DB)] 
+					//	   [s(R)]
+					// [near(B)]
+					s->right->color = Color::Black;
+					s->color = Color::Red;
+					LeftRotate(s);
+
+					s = x->parent->left;
+				}
+
+				//            [p]
+				//     [s(B)]      [x(DB)] 
+				// [near(R)]
+
+				// [Case6]
+				s->color = x->parent->color;
+				x->parent->color = Color::Black;
+				s->left->color = Color::Black;
+				RightRotate(x->parent);
+				x = _root;
+			}
 		}
 	}
 
