@@ -17,6 +17,8 @@
 // 
 // 기본정렬(버블정렬, 선택정렬, 삽입정렬) O(N^2)
 // 힙정렬, 병합정렬 O(NLogN)
+// 퀵정렬 O(N^2) 최악조건, O(NlogN) 평균
+// 퀵정렬은 병합정렬에 비해 데이터 생성 및 복사가 없어서 빠르다[같은 O(NlogN)이지만]
 // 
 #pragma endregion
 
@@ -29,9 +31,9 @@ using namespace std;
 #include <thread>
 
 
+
 int main()
 {
-
 
     return 0;
 }

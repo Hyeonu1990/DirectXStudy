@@ -109,7 +109,7 @@ void MergeSort(vector<int>& v, int left, int right)
     MergeResult(v, left, mid, right);
 }
 
-int Heap_N_Merge()
+int Heap_N_Merge_Sort()
 {
     vector<int> v;
 
