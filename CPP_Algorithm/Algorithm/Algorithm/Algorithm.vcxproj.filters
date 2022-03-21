@@ -47,6 +47,15 @@
     <ClCompile Include="HeapSort_N_MergeSort.cpp">
       <Filter>소스 파일\Study</Filter>
     </ClCompile>
+    <ClCompile Include="QuickSort.cpp">
+      <Filter>소스 파일\Study</Filter>
+    </ClCompile>
+    <ClCompile Include="DisjointSet.cpp">
+      <Filter>소스 파일\Study</Filter>
+    </ClCompile>
+    <ClCompile Include="Kruskal.cpp">
+      <Filter>소스 파일\Study</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinarySearchTree.h">
