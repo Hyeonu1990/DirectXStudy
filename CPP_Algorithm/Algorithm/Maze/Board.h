@@ -24,10 +24,14 @@ public:
 	void			Render();
 
 	void			GenerateMap();
+	void			GenerateMap_Kruskal();
+	void			GenerateMap_Prim();
+
+
 	TileType		GetTileType(Pos pos);
 	ConsoleColor	GetTileColor(Pos pos);
 
-	Pos				GetEnterPos() { return Pos{ 1,1 }; }
+	Pos				GetEnterPos() { return Pos{ 1, 1 }; }
 	Pos				GetExitPos() { return Pos{ _size - 2, _size - 2 }; }
 	int32			GetSize() { return _size; }
 
@@ -35,5 +39,6 @@ private:
 	TileType	_tile[BOARD_MAX_SIZE][BOARD_MAX_SIZE] = {};
 	int32		_size = 0;
 	Player*		_player = nullptr;
+	const int32 _map_gen_idx = 1;
 };
 
