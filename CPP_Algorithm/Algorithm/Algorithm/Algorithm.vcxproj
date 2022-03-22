@@ -144,6 +144,7 @@
     <ClCompile Include="BinarySearchTree.cpp" />
     <ClCompile Include="BST_N_RBT.cpp" />
     <ClCompile Include="DisjointSet.cpp" />
+    <ClCompile Include="DynamicPrograming.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="HeapSort_N_MergeSort.cpp" />
     <ClCompile Include="Heap_N_PriorityQueue.cpp" />

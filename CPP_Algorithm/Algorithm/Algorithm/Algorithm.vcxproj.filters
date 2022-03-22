@@ -56,6 +56,9 @@
     <ClCompile Include="Kruskal.cpp">
       <Filter>소스 파일\Study</Filter>
     </ClCompile>
+    <ClCompile Include="DynamicPrograming.cpp">
+      <Filter>소스 파일\Study</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinarySearchTree.h">
