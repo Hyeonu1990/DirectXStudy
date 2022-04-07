@@ -145,14 +145,18 @@
     <ClCompile Include="BST_N_RBT.cpp" />
     <ClCompile Include="DisjointSet.cpp" />
     <ClCompile Include="DynamicPrograming.cpp" />
+    <ClCompile Include="Enchant.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="HeapSort_N_MergeSort.cpp" />
     <ClCompile Include="Heap_N_PriorityQueue.cpp" />
     <ClCompile Include="Kruskal.cpp" />
+    <ClCompile Include="LIS.cpp" />
     <ClCompile Include="List.cpp" />
     <ClCompile Include="Queue.cpp" />
     <ClCompile Include="QuickSort.cpp" />
     <ClCompile Include="Stack.cpp" />
+    <ClCompile Include="TIC_TAE_TOE.cpp" />
+    <ClCompile Include="TRIANGLE_PATH.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>

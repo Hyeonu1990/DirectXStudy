@@ -59,6 +59,18 @@
     <ClCompile Include="DynamicPrograming.cpp">
       <Filter>소스 파일\Study</Filter>
     </ClCompile>
+    <ClCompile Include="LIS.cpp">
+      <Filter>소스 파일\Study</Filter>
+    </ClCompile>
+    <ClCompile Include="TRIANGLE_PATH.cpp">
+      <Filter>소스 파일\Study</Filter>
+    </ClCompile>
+    <ClCompile Include="TIC_TAE_TOE.cpp">
+      <Filter>소스 파일\Study</Filter>
+    </ClCompile>
+    <ClCompile Include="Enchant.cpp">
+      <Filter>소스 파일\Study</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinarySearchTree.h">
