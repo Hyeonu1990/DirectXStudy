@@ -40,6 +40,7 @@ void Mesh::Render()
 	// TODO
 	// 1) Buffer에다가 데이터 세팅 - 위 Init에 CreateCommittedResource 관련 부분
 	// 2-1) Buffer의 주소를 register에다가 전송(Old)
+	// OR
 	// 2-2) TableDescHeap에다가 CBV전달(New)
 	// 3) 모두 세팅이 끝났으면 TableDescHeap 커밋
 	// 커맨드리스트에 적립되고 수행됨으로 즉시 발동되는게 아님
